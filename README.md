@@ -1,6 +1,24 @@
 # template
 Template engine for Deno
 
+## Interface
+```ts
+export interface ConstructorOptions {
+  open?: string;       // Open tag, default: {{
+  close?: string;      // Closing tag, default: }}
+  isEscape?: boolean;  // Whether to escape the value of parameter data, default: true
+}
+
+class Template {
+  constructor(options?: ConstructorOptions)
+  
+  render(str: string, data: object): string;
+  compile(str: string): string;
+  renderCompiled(compiled: Function, data: object): string;
+  renderFile(path: string, data: object): string;
+}
+``` 
+
 ## Usage
 
 ### render
@@ -78,24 +96,6 @@ const tpl = new Template();
 const data = { name: "def" };
 const result = tpl.renderFile("./index.html", data);
 ```
-
-## Interface
-```ts
-export interface ConstructorOptions {
-  open?: string;       // Open tag, default: {{
-  close?: string;      // Closing tag, default: }}
-  isEscape?: boolean;  // Whether to escape the value of parameter data, default: true
-}
-
-class Template {
-  constructor(options?: ConstructorOptions)
-  
-  render(str: string, data: object): string;
-  compile(str: string): string;
-  renderCompiled(compiled: Function, data: object): string;
-  renderFile(path: string, data: object): string;
-}
-``` 
 
 ## Test
 ```bash
