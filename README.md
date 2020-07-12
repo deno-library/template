@@ -5,7 +5,7 @@ Template engine for Deno
 
 ### render
 ```ts
-import Template from "./mod.ts";
+import Template from "https://deno.land/x/template@0.1.0/mod.ts";
 const tpl = new Template();
 const str = tpl.render("abc{{name}}{{name2}}def\n{{fn}}s{{p.arr}}ww", {
   name: "def",
@@ -20,8 +20,9 @@ assert(
 ```
 
 ### compile
-reuse compiled function
+Reuse compiled function
 ```ts
+import Template from "https://deno.land/x/template@0.1.0/mod.ts";
 const tpl = new Template();
 const compiled = tpl.compile("abc{{name}}");
 const str1 = tpl.renderCompiled(compiled, { name: "def" });
@@ -32,6 +33,7 @@ assert(str2 === "abcxyz");
 
 ### not escape
 ```ts
+import Template from "https://deno.land/x/template@0.1.0/mod.ts";
 const tpl = new Template({
   isEscape: false,
 });
@@ -53,6 +55,7 @@ assertEquals(tpl.renderCompiled(compiled, data), result);
 
 ### open and close
 ```ts
+import Template from "https://deno.land/x/template@0.1.0/mod.ts";
 const tpl = new Template({
   open: "<%",
   close: "%>",
@@ -70,6 +73,7 @@ assertEquals(str, "abcdef");
 ### renderFile
 Compiled functions are cached
 ```ts
+import Template from "https://deno.land/x/template@0.1.0/mod.ts";
 const tpl = new Template();
 const data = { name: "def" };
 const result = tpl.renderFile("./index.html", data);
