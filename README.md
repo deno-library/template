@@ -95,4 +95,9 @@ class Template {
   renderCompiled(compiled: Function, data: object): string;
   renderFile(path: string, data: object): string;
 }
+``` 
+
+## Test
+```bash
+deno test --allow-read
 ```
