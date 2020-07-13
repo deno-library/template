@@ -11,11 +11,11 @@ export interface CompiledFunction extends Function {
 }
 
 export default class Template {
-  open: string;
-  close: string;
-  cache: Map<string, CompiledFunction> = new Map();
-  decoder = new TextDecoder();
-  isEscape: boolean;
+  private open: string;
+  private close: string;
+  private cache: Map<string, CompiledFunction> = new Map();
+  private decoder = new TextDecoder();
+  private isEscape: boolean;
 
   constructor(options?: ConstructorOptions) {
     this.open = options?.open ?? "{{";
