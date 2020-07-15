@@ -63,14 +63,15 @@ export default class Template {
     return compiled(data, this.escape.bind(this));
   }
 
-  escape(str: any): string {
+  private escape(str: any): string {
     if (typeof str === "object") {
       str = JSON.stringify(str);
     }
     str = String(str);
     if (this.isEscape === false) return str;
     return str.replace(/&(?!\w+;)/g, "&amp;")
-      .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
   }
