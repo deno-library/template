@@ -1,4 +1,7 @@
 # template
+
+[![JSR Version](https://jsr.io/badges/@deno-library/template)](https://jsr.io/@deno-library/template)
+
 Template engine for Deno
 
 ## Interface
