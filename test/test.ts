@@ -1,7 +1,4 @@
-import {
-  assert,
-  assertEquals,
-} from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals } from "jsr:@std/assert";
 import Template from "../mod.ts";
 
 Deno.test("open close", () => {
@@ -12,7 +9,7 @@ Deno.test("open close", () => {
 
   // render
   assertEquals(tpl.render("abc<%name%>", { name: "def" }), "abcdef");
-  
+
   // renderCompiled
   const compiled = tpl.compile("abc<%name%>");
   const str = tpl.renderCompiled(compiled, { name: "def" });

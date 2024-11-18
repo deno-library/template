@@ -1,46 +1,80 @@
+/**
+ * Type alias for data objects where keys are strings and values can be of any type.
+ */
 type Data = Record<string, unknown>;
 
+/**
+ * Interface for constructor options, allowing customization of template delimiters and escape behavior.
+ */
 export interface ConstructorOptions {
+  /**
+   * The opening delimiter for template tags. Defaults to "{{".
+   */
   open?: string;
+  /**
+   * The closing delimiter for template tags. Defaults to "}}".
+   */
   close?: string;
+  /**
+   * Whether to escape output for HTML entities. Defaults to true.
+   */
   isEscape?: boolean;
 }
 
-export interface CompiledFunction extends Function {
-  (data: Data, fn: Function): string;
+/**
+ * Interface for the compiled function, which takes a data object and an escape function, and returns a rendered string.
+ */
+export interface CompiledFunction {
+  (data: Data, escape: (str: string | object) => string): string;
 }
 
+/**
+ * Class for parsing and rendering template strings.
+ */
 export default class Template {
   private open: string;
   private close: string;
   private cache: Map<string, CompiledFunction> = new Map();
   private decoder = new TextDecoder();
   private isEscape: boolean;
+  private reg: RegExp;
 
+  /**
+   * Creates a new Template instance.
+   * @param options - Optional constructor options.
+   */
   constructor(options?: ConstructorOptions) {
     this.open = options?.open ?? "{{";
     this.close = options?.close ?? "}}";
     this.isEscape = options?.isEscape ?? true;
+    this.reg = new RegExp(`${this.open}([\\s\\S]+?)${this.close}`, "g");
   }
 
+  /**
+   * Renders a given template string.
+   * @param str - The template string to render.
+   * @param data - The data object used to populate the template.
+   * @returns The rendered string.
+   */
   render(str: string, data: Data): string {
-    const reg = new RegExp(`${this.open}([\\s\\S]+?)${this.close}`, "g");
-    const result = str.replace(reg, (match, key: string): string => {
-      let value: any = data;
-      key.replace(/ /g, "").split(".").forEach((key) => {
-        value = value[key];
+    return str.replace(this.reg, (match, key: string): string => {
+      let value: unknown = data;
+      key.replace(/ /g, "").split(".").forEach((k) => {
+        value = (value as Record<string, unknown>)[k];
       });
       if (value === undefined) return match;
-      return this.escape(value);
+      return this.escape(value as string | Data);
     });
-
-    return result;
   }
 
+  /**
+   * Compiles a template string into an executable function.
+   * @param str - The template string to compile.
+   * @returns The compiled function.
+   */
   compile(str: string): CompiledFunction {
-    const reg = new RegExp(`${this.open}([\\s\\S]+?)${this.close}`, "g");
     const result = str.replace(/\n/g, "\\n")
-      .replace(reg, (match, key: string): string => {
+      .replace(this.reg, (match, key: string): string => {
         key = key.trim();
         return `' + (obj.${key} ? escape(obj.${key}) : '${match}') + '`;
       });
@@ -48,10 +82,22 @@ export default class Template {
     return new Function("obj", "escape", tpl) as CompiledFunction;
   }
 
+  /**
+   * Renders data using a compiled function.
+   * @param compiled - The compiled function.
+   * @param data - The data object used to populate the template.
+   * @returns The rendered string.
+   */
   renderCompiled(compiled: CompiledFunction, data: Data): string {
     return compiled(data, this.escape.bind(this));
   }
 
+  /**
+   * Reads a template from a file and renders it.
+   * @param path - The path to the template file.
+   * @param data - The data object used to populate the template.
+   * @returns The rendered string.
+   */
   async renderFile(path: string, data: Data): Promise<string> {
     if (this.cache.has(path)) {
       return this.renderCompiled(this.cache.get(path)!, data);
@@ -63,7 +109,12 @@ export default class Template {
     return compiled(data, this.escape.bind(this));
   }
 
-  private escape(str: any): string {
+  /**
+   * Escapes a string for HTML entities.
+   * @param str - The string or object to escape.
+   * @returns The escaped string.
+   */
+  private escape(str: string | object): string {
     if (typeof str === "object") {
       str = JSON.stringify(str);
     }

@@ -23,7 +23,8 @@ class Template {
 
 ### render
 ```ts
-import Template from "https://deno.land/x/template@v0.1.0/mod.ts";
+import Template from "jsr:@deno-library/template";
+// import Template from "https://deno.land/x/template@v0.1.0/mod.ts";
 const tpl = new Template();
 const str = tpl.render("abc{{name}}{{name2}}def\n{{fn}}s{{p.arr}}ww", {
   name: "def",
